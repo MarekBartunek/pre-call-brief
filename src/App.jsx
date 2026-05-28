@@ -99,7 +99,7 @@ async function runAgent(apiKey, company, url, context, onStep) {
       },
       body: JSON.stringify({
         model:      MODEL,
-        max_tokens: 8000,
+        max_tokens: 3000,
         system:     sysPrompt,
         tools,
         messages,
@@ -126,18 +126,23 @@ async function runAgent(apiKey, company, url, context, onStep) {
 
       // Rebuild messages: add Claude's response, then acknowledge the tool result.
       // Anthropic's servers already executed the search — content can be empty string.
+      //
+      // IMPORTANT: strip thinking blocks and large search result content from the
+      // assistant message before storing it. We only need the tool_use blocks in
+      // history — keeping everything causes the input token count to explode across
+      // turns and hit rate limits.
+      const toolUseBlocks = data.content.filter(b => b.type === 'tool_use')
+
       messages = [
         ...messages,
-        { role: 'assistant', content: data.content },
+        { role: 'assistant', content: toolUseBlocks },
         {
           role: 'user',
-          content: data.content
-            .filter(b => b.type === 'tool_use')
-            .map(tu => ({
-              type:        'tool_result',
-              tool_use_id: tu.id,
-              content:     '',
-            })),
+          content: toolUseBlocks.map(tu => ({
+            type:        'tool_result',
+            tool_use_id: tu.id,
+            content:     '',
+          })),
         },
       ]
       continue
