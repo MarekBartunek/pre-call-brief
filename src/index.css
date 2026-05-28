@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0f;
+  color: #e2e8f0;
+}
+
+/* Subtle animated gradient for the header accent */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1;   }
+}
+
+.accent-pulse {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Brief section fade-in */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.fade-up {
+  animation: fadeUp 0.4s ease both;
+}
